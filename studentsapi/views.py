@@ -1,24 +1,35 @@
+from tokenize import Token
 from rest_framework import status
-
-# TemplateResponse that takes unrendered content
-#  and uses content negotiation 
-# to determine the correct content type to return to the client.
 from rest_framework.response import Response
-
-
-#api_view defines which method is allowed i.e is it a GET,PUT,POST,DELETE,PATCH
-# and works with function based views
-from rest_framework.decorators import api_view
-
-from .serializer import studentsSerializers 
-from students.models import students
-# Create your views here.
-
-
+from rest_framework.decorators import api_view ,permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+
+from .serializer import studentsSerializers,Registerserializer 
+from students.models import students
+
+
+@api_view(['POST',])
+def register_user(request):
+    if request.method == 'POST':
+        newsuser = Registerserializer(data=request.data)
+        data = {}
+        if newsuser.is_valid():
+            user_acc = newsuser.save()
+            data['reponse'] = "Registration Succesfully  completed"
+            data['email'] = user_acc.email
+            data['username'] = user_acc.username
+            token = Token.objects.get(user=user_acc).key
+            data['token'] = token
+            #return Response(newsuser.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(newsuser.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(data)
+
 
 #function for getting all students in te database
 @api_view(['GET'])
+@permission_classes([IsAuthenticated,])
 def get_students(request):
     try:
         allstudents = students.objects.all()
