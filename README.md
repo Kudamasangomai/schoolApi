@@ -1,2 +1,2 @@
 # schoolApi
-school Api using Django rest framework
+school Api using Django rest framework with token Authentication
