@@ -1,6 +1,6 @@
 from django.db import models
 import random
-# from datetime import datetime
+from datetime import datetime
 
 
 
@@ -14,8 +14,8 @@ class students(models.Model):
     lastname = models.CharField(max_length=50,null=False,blank=False)
     email = models.EmailField(max_length=50,null=False,blank=False,unique=True)
     regnumber = models.IntegerField(default=random_reg_number)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_created = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(default=datetime.today)
+ 
 
     def __str__(self):
         return f'{self.firstname} {self.lastname}'
